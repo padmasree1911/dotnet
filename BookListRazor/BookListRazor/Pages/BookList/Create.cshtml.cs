@@ -17,10 +17,25 @@ namespace BookListRazor.Pages.BookList
             _db = db;
         }
 
+        [BindProperty] // Get Book on OnPost
         public Book Book { get; set; }
 
         public void OnGet()
         {
+        }
+
+        public async Task<IActionResult> OnPost()
+        {
+            if (ModelState.IsValid)
+            {
+                await _db.Book.AddAsync(Book);
+                await _db.SaveChangesAsync();
+                return RedirectToPage("Index");
+            }
+            else
+            {
+                return Page();
+            }
         }
     }
 }
