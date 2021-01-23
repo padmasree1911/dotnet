@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Grpc.Core;
 using Grpc.Net.Client;
 using GrpcService;
+using Microsoft.Extensions.Logging;
 
 namespace GrpcClient
 {
@@ -25,7 +26,13 @@ namespace GrpcClient
                 var headers = new Metadata();
                 headers.Add("Authorization", $"Basic {token}");
 
-                using var channel = GrpcChannel.ForAddress("https://localhost:5001");
+                var loggerFactory = LoggerFactory.Create(logging =>
+                {
+                    logging.AddConsole();
+                    logging.SetMinimumLevel(LogLevel.Debug);
+                });
+
+                using var channel = GrpcChannel.ForAddress("https://localhost:5001", new GrpcChannelOptions { LoggerFactory = loggerFactory });
                 var client = new Greeter.GreeterClient(channel);
 
                 Console.WriteLine("Sending unary call...");

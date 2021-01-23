@@ -16,6 +16,7 @@ namespace GrpcService
 
         public override Task<HelloReply> SayHello(HelloRequest request, ServerCallContext context)
         {
+            _logger.LogInformation("SayHello call initiated.");
             return Task.FromResult(new HelloReply
             {
                 Message = "Hello " + request.Name
@@ -24,6 +25,7 @@ namespace GrpcService
 
         public override async Task SayManyHellos(HelloRequest request, IServerStreamWriter<HelloReply> responseStream, ServerCallContext context)
         {
+            _logger.LogInformation("SayManyHellos call initiated.");
             for (var i = 0; i < 10; i++)
             {
                 await responseStream.WriteAsync(new HelloReply
@@ -35,6 +37,7 @@ namespace GrpcService
 
         public override async Task<HelloReply> SayHelloToLastRequest(IAsyncStreamReader<HelloRequest> requestStream, ServerCallContext context)
         {
+            _logger.LogInformation("SayHelloToLastRequest call initiated.");
             var name = string.Empty;
 
             await foreach (var request in requestStream.ReadAllAsync())
@@ -51,6 +54,7 @@ namespace GrpcService
         [Authorize(Roles="admin")]
         public override async Task SayHelloToEveryRequest(IAsyncStreamReader<HelloRequest> requestStream, IServerStreamWriter<HelloReply> responseStream, ServerCallContext context)
         {
+            _logger.LogInformation("SayHelloToEveryRequest call initiated.");
             await foreach (var request in requestStream.ReadAllAsync())
             {
                 await responseStream.WriteAsync(new HelloReply
