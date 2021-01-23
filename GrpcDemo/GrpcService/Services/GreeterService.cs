@@ -1,9 +1,11 @@
 using Grpc.Core;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 
 namespace GrpcService
 {
+    [Authorize]
     public class GreeterService : Greeter.GreeterBase
     {
         private readonly ILogger<GreeterService> _logger;
@@ -46,6 +48,7 @@ namespace GrpcService
             };
         }
 
+        [Authorize(Roles="admin")]
         public override async Task SayHelloToEveryRequest(IAsyncStreamReader<HelloRequest> requestStream, IServerStreamWriter<HelloReply> responseStream, ServerCallContext context)
         {
             await foreach (var request in requestStream.ReadAllAsync())
